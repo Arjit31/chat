@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer';
+import crypto from 'crypto'
+import bcrypt from 'bcrypt'
 
 async function transport(mailOptions: any, transporter: any) {
     await transporter.sendMail(mailOptions);
@@ -20,17 +22,19 @@ export const POST = async (req: any, res: any) => {
             pass: process.env.EMAIL_PASSWORD,
         },
     });
-
+    const otp = crypto.randomInt(100000, 999999);
+    const hashedOtp = await bcrypt.hash(otp.toString(), 10);
+    console.log(otp, hashedOtp);
     const mailOptions = {
         from: process.env.EMAIL,
         to: email,
         subject: subject,
-        text: `Your varification code is ${3423}`,
+        text: `Your varification code is ${otp}`,
     };
 
     try {
         transport(mailOptions, transporter);
-        return NextResponse.json({ success: true }, { status: 200 })
+        return NextResponse.json({ success: true, otp: hashedOtp }, { status: 200 })
     }
     catch (error) {
         console.error('Error sending email:', error);

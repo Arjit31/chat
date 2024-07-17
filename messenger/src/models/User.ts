@@ -15,9 +15,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please add a name'],
   },
+  password: {
+    type: String,
+    required: [true, 'Please add a name'],
+  },
   imageUrl: {
     type: String,
-    required: true,
+    required: false,
   },
 });
 
